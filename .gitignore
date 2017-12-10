@@ -1,0 +1,5 @@
+# -*- mode: gitignore; coding: utf-8; -*-
+
+# Emacs temporary files
+\#*#
+*~

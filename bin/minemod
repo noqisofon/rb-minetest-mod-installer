@@ -1,0 +1,89 @@
+#!/usr/bin/ruby
+# -*- mode: ruby; coding: utf-8; -*-
+require 'uri'
+
+PROGRAM_NAME = File.basename $0
+VERSION      = '0.0.1'
+
+MINETEST_ARCHIVE_URL = URI.parse 'https://github.com/minetest/minetest/releases/download/0.4.16/minetest-0.4.16-win64.zip'
+
+PACKAGES = {
+  :homedecor  => 'https://github.com/minetest-mods/homedecor_modpack/archive/master.zip',
+  :moreblocks => 'https://github.com/minetest-mods/moreblocks/archive/master.zip',
+  :moreores   => 'https://github.com/Calinou/moreores/archive/master.zip',
+}
+
+@minetest_base_dir = File.expand_path( '~/share/games/minetest-0.4.16-win64' )
+
+def list_mods()
+  PACKAGES.keys.each do |mod_name|
+    puts mod_name
+  end
+end
+
+def move(from ,to)
+  `mv -v #{from} #{to}`
+end
+
+def download(url, output_path)
+  `wget -nv --show-progress #{url} -O #{output_path}`
+end
+
+def unzip(archive_path)
+  base_dir = File.dirname archive_path
+
+  Dir.chdir base_dir do |current_path|
+    `unzip #{archive_path}`
+  end
+end
+
+def install_mod(args)
+  # ORIGINAL_TEMP => ~/AppData/Local/Temp
+  # TEMP          => /tmp
+  base_dir = File.join ENV['ORIGINAL_TEMP'], PROGRAM_NAME
+  Dir.mkdir base_dir unless File.exist? base_dir
+
+  args.each do |arg|
+    mod_name = args.shift.intern
+
+    raise "#{mod_name} was not found" unless PACKAGES.has_key? mod_name
+
+    archive_url         = URI.parse PACKAGES[mod_name]
+    output_archive_path = File.join base_dir, "#{mod_name}.zip"
+
+    download archive_url, output_archive_path
+    unzip output_archive_path
+    move File.join( base_dir, "#{mod_name}-master"), File.join( @minetest_base_dir, 'mods' )
+  end
+end
+
+def show_version(program_name, version)
+  puts "#{program_name} version #{version}"
+end
+
+def show_help()
+end
+
+def main(args)
+  arg = args.shift
+
+  case arg
+  when 'list'
+    list_mods
+
+  when 'install'
+    install_mod args
+
+  when 'version'
+    show_version PROGRAM_NAME, VERSION
+
+  else
+    show_help
+  end
+rescue
+  puts "ERROR: #{$!.message}"
+end
+
+if $0 == __FILE__ then
+  main ARGV.dup
+end
