@@ -8,15 +8,19 @@ VERSION      = '0.0.1'
 MINETEST_ARCHIVE_URL = URI.parse 'https://github.com/minetest/minetest/releases/download/0.4.16/minetest-0.4.16-win64.zip'
 
 PACKAGES = {
-  :homedecor  => 'https://github.com/minetest-mods/homedecor_modpack/archive/master.zip',
-  :moreblocks => 'https://github.com/minetest-mods/moreblocks/archive/master.zip',
-  :moreores   => 'https://github.com/Calinou/moreores/archive/master.zip',
+  :homedecor    => 'https://github.com/minetest-mods/homedecor_modpack/archive/master.zip',
+  :xdecor       => 'https://github.com/minetest-mods/xdecor/archive/master.zip',
+  :moreblocks   => 'https://github.com/minetest-mods/moreblocks/archive/master.zip',
+  :moreores     => 'https://github.com/Calinou/moreores/archive/master.zip',
+  :quartz       => 'https://github.com/minetest-mods/quartz/archive/master.zip',
+  :streets      => 'https://github.com/minetest-streets/streets/archive/master.zip',
+  :colored_cray => 'http://github.com/amadin/colored_clay/archive/master.zip'
 }
 
 @minetest_base_dir = File.expand_path( '~/share/games/minetest-0.4.16-win64' )
 
 def list_mods()
-  PACKAGES.keys.each do |mod_name|
+  PACKAGES.keys.sort.each do |mod_name|
     puts mod_name
   end
 end
